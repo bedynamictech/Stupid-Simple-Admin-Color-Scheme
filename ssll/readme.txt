@@ -3,7 +3,7 @@ Contributors: bedynamictech
 Tags: logo changer, login form, login changer
 Tested up to: 6.7.1
 Tested up to PHP: 8.1.31
-Stable tag: 1.0
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 This plugin allows the user to easily change the logo displayed on the login page.
