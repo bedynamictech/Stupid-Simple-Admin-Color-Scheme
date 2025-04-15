@@ -75,3 +75,9 @@ function sscd_remove_comment_headers() {
     remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
 }
 add_action('init', 'sscd_remove_comment_headers');
+
+function sscd_disable_comments_pre_option($value) {
+    return 'closed';
+}
+add_filter('pre_option_default_comment_status', 'sscd_disable_comments_pre_option');
+add_filter('pre_option_default_pingstatus', 'sscd_disable_comments_pre_option');
