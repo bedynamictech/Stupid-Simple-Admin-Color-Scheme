@@ -3,6 +3,7 @@
 Plugin Name: Stupid Simple Admin Color Scheme
 description: Set the default admin color scheme for all users, including new ones, and hide the color scheme selector.
 Version: 1.1.1
+GitHub Repo: https://github.com/bedynamictech/StupidSimplePlugins
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
 License: GPLv2 or later
