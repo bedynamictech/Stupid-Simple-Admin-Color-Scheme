@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Stupid Simple Login Check
-Description: Adds a honeypot field and nonce check to the Login page to prevent automated login attempts.
-Version: 1.1
+Description: Adds a honeypot field, nonce check, and brute-force protection to the Login page to prevent automated login attempts.
+Version: 1.2
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
 License: GPLv2 or later
@@ -15,60 +15,115 @@ if (!defined('ABSPATH')) {
 
 class Stupid_Simple_Login_Checker {
 
+    private $max_attempts = 5;
+    private $lockout_duration = 300; // in seconds (5 minutes)
+    private $option_key = 'sslc_locked_ips';
+
     public function __construct() {
-        // Hook to add a honeypot and nonce field to the login form
         add_action('login_form', array($this, 'add_honeypot_and_nonce'));
-        // Hook to check for the nonce and honeypot before allowing login
         add_filter('authenticate', array($this, 'check_login'), 30, 3);
+        add_action('wp_login_failed', array($this, 'track_failed_login'));
+        add_action('admin_menu', array($this, 'setup_admin_menu'));
     }
 
-    /**
-     * Adds a honeypot field and a nonce check to the login form
-     */
     public function add_honeypot_and_nonce() {
-        // Output hidden honeypot field
         echo '<input type="hidden" name="sslc_honeypot" value="" id="sslc_honeypot" autocomplete="off" />';
-        
-        // Output hidden visual honeypot field (to trick bots)
         echo '<div id="sslc_honeypot_wrap" style="display:none;">';
         echo '<label for="sslc_honeypot_visual">Honeypot</label>';
         echo '<input type="text" id="sslc_honeypot_visual" name="sslc_honeypot_visual" autocomplete="off" tabindex="-1">';
         echo '</div>';
-        
-        // Output nonce field to protect against CSRF
         wp_nonce_field('sslc_login_nonce', 'sslc_nonce');
     }
 
-    /**
-     * Validates the login form input for nonce and honeypot fields.
-     *
-     * @param WP_User|WP_Error|null $user The user object or WP_Error instance.
-     * @param string $username The username submitted.
-     * @param string $password The password submitted.
-     * @return WP_User|WP_Error
-     */
     public function check_login($user, $username, $password) {
+        $ip = $this->get_user_ip();
+
+        $locked_ips = get_option($this->option_key, array());
+        if (isset($locked_ips[$ip]) && time() < $locked_ips[$ip]['locked_until']) {
+            return new WP_Error('sslc_locked', __('<strong>ERROR</strong>: Too many failed login attempts. Try again later.', 'stupid-simple-login-checker'));
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['log'])) {
-            // Validate nonce to prevent CSRF attacks
             if (!isset($_POST['sslc_nonce']) || !wp_verify_nonce($_POST['sslc_nonce'], 'sslc_login_nonce')) {
                 return new WP_Error('sslc_error', __('<strong>ERROR</strong>: Spam detected!', 'stupid-simple-login-checker'));
             }
-
-            // Honeypot check: If the honeypot field has a value, it’s likely a bot
-            if (!empty($_POST['sslc_honeypot'])) {
-                return new WP_Error('sslc_error', __('<strong>ERROR</strong>: Spam detected!', 'stupid-simple-login-checker'));
-            }
-
-            // Check if the visual honeypot field is filled out (it shouldn’t be for humans)
-            if (!empty($_POST['sslc_honeypot_visual'])) {
+            if (!empty($_POST['sslc_honeypot']) || !empty($_POST['sslc_honeypot_visual'])) {
                 return new WP_Error('sslc_error', __('<strong>ERROR</strong>: Spam detected!', 'stupid-simple-login-checker'));
             }
         }
 
         return $user;
     }
+
+    public function track_failed_login($username) {
+        $ip = $this->get_user_ip();
+        $locked_ips = get_option($this->option_key, array());
+
+        if (!isset($locked_ips[$ip])) {
+            $locked_ips[$ip] = array('attempts' => 0, 'locked_until' => 0);
+        }
+
+        $locked_ips[$ip]['attempts']++;
+        if ($locked_ips[$ip]['attempts'] >= $this->max_attempts) {
+            $locked_ips[$ip]['locked_until'] = time() + $this->lockout_duration;
+            $locked_ips[$ip]['attempts'] = 0; // reset attempts after lockout
+        }
+
+        update_option($this->option_key, $locked_ips);
+    }
+
+    private function get_user_ip() {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    public function setup_admin_menu() {
+        add_menu_page(
+            'Stupid Simple',
+            'Stupid Simple',
+            'manage_options',
+            'stupidsimple',
+            '',
+            'dashicons-hammer',
+            99
+        );
+
+        add_submenu_page(
+            'stupidsimple',
+            'Login Check',
+            'Login Check',
+            'manage_options',
+            'sslc-lockout-log',
+            array($this, 'render_admin_page')
+        );
+    }
+
+    public function render_admin_page() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Handle unblock before any output
+        if (isset($_GET['unblock_ip']) && current_user_can('manage_options')) {
+            $unblock_ip = sanitize_text_field($_GET['unblock_ip']);
+            $locked_ips = get_option($this->option_key, array());
+            unset($locked_ips[$unblock_ip]);
+            update_option($this->option_key, $locked_ips);
+            wp_safe_redirect(remove_query_arg('unblock_ip'));
+            exit;
+        }
+
+        $locked_ips = get_option($this->option_key, array());
+
+        echo '<div class="wrap"><h1>Currently Locked Out IPs</h1><table class="widefat"><thead><tr><th>IP Address</th><th>Locked Until</th><th>Action</th></tr></thead><tbody>';
+
+        foreach ($locked_ips as $ip => $data) {
+            if (time() < $data['locked_until']) {
+                echo '<tr><td>' . esc_html($ip) . '</td><td>' . date('Y-m-d H:i:s', $data['locked_until']) . '</td><td><a href="' . esc_url(add_query_arg(['unblock_ip' => $ip])) . '" class="button">Unlock</a></td></tr>';
+            }
+        }
+
+        echo '</tbody></table></div>';
+    }
 }
 
-// Initialize the plugin
 new Stupid_Simple_Login_Checker();
