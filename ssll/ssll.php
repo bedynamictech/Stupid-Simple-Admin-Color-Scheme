@@ -2,12 +2,11 @@
 /*
 Plugin Name: Stupid Simple Login Logo
 description: Easily change the logo displayed on the Login page.
-Version: 1.3.2
+Version: 1.3.1
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Github ID: ssll
 */
 
 // Prevent direct access.
