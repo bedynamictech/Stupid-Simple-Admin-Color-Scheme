@@ -27,7 +27,6 @@ function ssacs_add_menu() {
         'Stupid Simple',
         'manage_options',
         'stupidsimple',
-        'stupid_simple_parent_page',
         'dashicons-hammer',
         99
     );
@@ -40,15 +39,6 @@ function ssacs_add_menu() {
         'admin-color-scheme',
         'ssacs_settings_page_content'
     );
-}
-
-function stupid_simple_parent_page() {
-    ?>
-    <div class="wrap">
-      <h1>Thanks for using Stupid Simple plugins!</h1>
-      <p>This page doesn't contain anything useful, so here is some text.</p>
-    </div>
-    <?php
 }
 
 function ssacs_settings_page_content() {
