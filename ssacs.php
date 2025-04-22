@@ -5,6 +5,7 @@ description: Set the default admin color scheme for all users, including new one
 Version: 1.1.2
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
+Plugin URI: http://github.com/bedynamictech/Stupid-Simple-Admin-Color-Scheme
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
