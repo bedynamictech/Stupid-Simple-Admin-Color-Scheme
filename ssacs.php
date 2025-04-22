@@ -28,7 +28,7 @@ function ssacs_add_menu() {
         'manage_options',
         'stupidsimple',
         'dashicons-hammer',
-        'ss_render_page'
+        'ss_render_page',
         99
     );
 
