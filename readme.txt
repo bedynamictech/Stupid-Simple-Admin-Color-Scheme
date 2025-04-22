@@ -1,6 +1,6 @@
 === Stupid Simple Admin Color Scheme ===
 Contributors: bedynamictech
-Tags: wordpress-plugin, default admin scheme, color scheme
+Tags: default admin scheme, color scheme
 Tested up to: 6.8
 Tested up to PHP: 8.1.31
 Stable tag: 1.1.2
