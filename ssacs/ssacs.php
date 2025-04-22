@@ -2,7 +2,7 @@
 /*
 Plugin Name: Stupid Simple Admin Color Scheme
 description: Set the default admin color scheme for all users, including new ones, and hide the color scheme selector.
-Version: 1.1.1
+Version: 1.1.2
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
 License: GPLv2 or later
@@ -44,7 +44,6 @@ function ssacs_add_menu() {
     );
 }
 
-
 function ssacs_settings_page_content() {
     ?>
     <div class="wrap">
@@ -52,24 +51,21 @@ function ssacs_settings_page_content() {
         <form method="post" action="options.php">
             <?php settings_fields('ssacs_settings_group'); ?>
             <?php do_settings_sections('admin-color-scheme'); ?>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="ssacs_default_scheme"><?php _e('Default Scheme:', 'ssacs'); ?></label></th>
-                    <td>
-                        <select name="<?php echo esc_attr(SSACS_OPTION); ?>" id="ssacs_default_scheme">
-                            <?php
-                            global $_wp_admin_css_colors;
-                            $schemes = array_keys($_wp_admin_css_colors);
-                            $current_scheme = get_option(SSACS_OPTION, 'default');
-                            foreach ($schemes as $scheme) {
-                                $selected = selected($scheme, $current_scheme, false);
-                                echo '<option value="' . esc_attr($scheme) . '" ' . $selected . '>' . esc_html(ucfirst($scheme)) . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </td>
-                </tr>
-            </table>
+
+            <div style="margin-top: 20px;">
+                <select name="<?php echo esc_attr(SSACS_OPTION); ?>" id="ssacs_default_scheme">
+                    <?php
+                    global $_wp_admin_css_colors;
+                    $schemes = array_keys($_wp_admin_css_colors);
+                    $current_scheme = get_option(SSACS_OPTION, 'default');
+                    foreach ($schemes as $scheme) {
+                        $selected = selected($scheme, $current_scheme, false);
+                        echo '<option value="' . esc_attr($scheme) . '" ' . $selected . '>' . esc_html(ucfirst($scheme)) . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+
             <?php submit_button(); ?>
         </form>
     </div>
