@@ -1,12 +1,13 @@
 <?php
 /*
 Plugin Name: Stupid Simple Login Logo
-description: Easily change the logo displayed on the Login page.
-Version: 1.3.1
+Description: Easily change the logo displayed on the Login page.
+Version: 1.3.2
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Update URI: https://github.com/bedynamictech/StupidSimplePlugins/tree/main/ssll
 */
 
 // Prevent direct access.
@@ -126,15 +127,13 @@ function ssll_register_settings() {
 // Settings Section Callback
 function ssll_logo_section_callback() {
     $logo_url = get_option(SSLL_OPTION);
-    echo '<table class="form-table">';
-    echo '<tr>';
-    echo '<th scope="row"><label for="wp_logo_url">' . esc_html(__('Logo URL:', 'ssll')) . '</label></th>';
-    echo '<td><input type="text" id="wp_logo_url" name="' . esc_attr(SSLL_OPTION) . '" value="' . esc_attr($logo_url) . '" size="50" />';
-    echo '<input type="button" name="logo-btn" id="logo-btn" class="button-secondary" value="' . esc_attr($logo_url ? __('Remove Logo', 'ssll') : __('Upload Logo', 'ssll')) . '" />';
-    echo '<p class="description">' . esc_html(__('The selected image will replace the default WordPress logo on the login page.', 'ssll')) . '</p></td>';
-    echo '</tr>';
-    echo '</table>';
+    echo '<div style="margin-top: 20px;">';
+    echo '<input type="text" id="wp_logo_url" name="' . esc_attr(SSLL_OPTION) . '" value="' . esc_attr($logo_url) . '" class="regular-text" />';
+    echo ' <input type="button" name="logo-btn" id="logo-btn" class="button" value="' . esc_attr($logo_url ? __('Remove Logo', 'ssll') : __('Upload Logo', 'ssll')) . '" />';
+    echo '<p class="description">' . esc_html(__('Use the upload button, or enter the URL of an image.', 'ssll')) . '</p>';
+    echo '</div>';
 }
+
 
 // AJAX handler to remove the logo
 function remove_login_logo() {
