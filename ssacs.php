@@ -2,7 +2,7 @@
 /*
 Plugin Name: Stupid Simple Admin Color Scheme
 description: Set the default admin color scheme for all users, including new ones, and hide the color scheme selector.
-Version: 1.1.3
+Version: 1.1.4
 Author: Dynamic Technologies
 Author URI: http://bedynamic.tech
 Plugin URI: http://github.com/bedynamictech/Stupid-Simple-Admin-Color-Scheme
@@ -27,11 +27,8 @@ function ssacs_add_menu() {
         'Stupid Simple',
         'manage_options',
         'stupidsimple',
-        function () {
-            wp_redirect('https://bedynamic.tech/stupid-simple/');
-            exit;
-        },
         'dashicons-hammer',
+        'ss_render_page'
         99
     );
 
@@ -43,6 +40,17 @@ function ssacs_add_menu() {
         'admin-color-scheme',
         'ssacs_settings_page_content'
     );
+}
+
+function ss_render_page() {
+    ?>
+    <div class="wrap">
+      <h1>Thanks for using Stupid Simple plugins!</h1>
+      <p>
+        This page doesn't contain anything useful, so here is some text.
+      </p>
+    </div>
+    <?php
 }
 
 function ssacs_settings_page_content() {
