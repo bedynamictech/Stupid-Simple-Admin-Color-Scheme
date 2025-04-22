@@ -27,8 +27,8 @@ function ssacs_add_menu() {
         'Stupid Simple',
         'manage_options',
         'stupidsimple',
+        'ssacs_parent_page',
         'dashicons-hammer',
-        'ss_render_page',
         99
     );
 
@@ -42,13 +42,11 @@ function ssacs_add_menu() {
     );
 }
 
-function ss_render_page() {
+function ssacs_parent_page() {
     ?>
     <div class="wrap">
       <h1>Thanks for using Stupid Simple plugins!</h1>
-      <p>
-        This page doesn't contain anything useful, so here is some text.
-      </p>
+      <p>This page doesn't contain anything useful, so here is some text.</p>
     </div>
     <?php
 }
