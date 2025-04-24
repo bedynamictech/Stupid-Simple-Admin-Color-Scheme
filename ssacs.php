@@ -1,14 +1,14 @@
 <?php
-/*
-Plugin Name: Stupid Simple Admin Color Scheme
-Description: Set the default admin color scheme for all users, including new ones, and hide the color scheme selector.
-Version: 1.1.5
-Author: Dynamic Technologies
-Author URI: http://bedynamic.tech
-Plugin URI: http://github.com/bedynamictech/Stupid-Simple-Admin-Color-Scheme
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-*/
+/**
+ * Plugin Name: Stupid Simple Admin Color Scheme
+ * Description: Set the default admin color scheme for all users, including new ones, and hide the color scheme selector.
+ * Version: 1.1.5
+ * Author: Dynamic Technologies
+ * Author URI: https://bedynamic.tech
+ * Plugin URI: https://github.com/bedynamictech/Stupid-Simple-Admin-Color-Scheme
+ * License: GPLv2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ */
 
 // Prevent direct access.
 if (!defined('ABSPATH')) {
@@ -166,3 +166,11 @@ function ssacs_admin_notice() {
     }
 }
 ?>
+
+// Add Settings link on Plugins page
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'ssacs_action_links' );
+function ssacs_action_links( $links ) {
+    $settings_link = '<a href="' . admin_url( 'admin.php?page=admin-color-scheme' ) . '">Settings</a>';
+    array_unshift( $links, $settings_link );
+    return $links;
+}
