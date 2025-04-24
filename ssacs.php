@@ -15,6 +15,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Add “Settings” link on the Plugins page
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'ssacs_action_links' );
+function ssacs_action_links( $links ) {
+    $settings_link = '<a href="' . admin_url( 'admin.php?page=admin-color-scheme' ) . '">Settings</a>';
+    array_unshift( $links, $settings_link );
+    return $links;
+}
+
 // Define constants
 define('SSACS_OPTION', 'ssacs_default_scheme');
 
@@ -166,11 +174,3 @@ function ssacs_admin_notice() {
     }
 }
 ?>
-
-// Add Settings link on Plugins page
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'ssacs_action_links' );
-function ssacs_action_links( $links ) {
-    $settings_link = '<a href="' . admin_url( 'admin.php?page=admin-color-scheme' ) . '">Settings</a>';
-    array_unshift( $links, $settings_link );
-    return $links;
-}
